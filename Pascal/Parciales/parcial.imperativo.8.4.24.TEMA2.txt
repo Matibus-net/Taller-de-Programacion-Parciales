@@ -1,0 +1,152 @@
+program parcial;
+type
+    Poliza = record
+        DNI: integer;
+        suma: real;
+        valorCuota: real;
+        anio: integer;
+    end;
+
+    arbol = ^nodo;
+    nodo = record
+        dato: Poliza;
+        hi: arbol;
+        hd: arbol;
+    end;
+
+    list = ^nodol;
+    nodol = record
+        dato: Poliza;
+        sig: list;
+    end;
+
+    vec = array[2000..2023] of list;
+
+procedure leer(var reg: Poliza);
+begin
+    reg.DNI := random(1000) - 1;
+    if (reg.DNI <> -1) then
+    begin
+        reg.suma := random(100) + 1;
+        reg.valorCuota := random(100) + 1;
+        reg.anio := random(24) + 2000;
+    end;
+end;
+
+procedure inicioVec(var vec: vec);
+var
+    i: integer;
+begin
+    for i := 2000 to 2023 do
+        vec[i] := nil;
+end;
+
+procedure cargarArbol(var ab: arbol; reg: Poliza);
+begin
+    if (ab = nil) then
+    begin
+        new(ab);
+        ab^.hi := nil;
+        ab^.hd := nil;
+        ab^.dato := reg;
+    end
+    else
+    begin
+        if (ab^.dato.suma > reg.suma) then
+            cargarArbol(ab^.hi, reg)
+        else
+            cargarArbol(ab^.hd, reg);
+    end;
+end;
+
+procedure InsertarOrdenado(var l: list; reg: Poliza);
+var
+    nuevo, act, ant: list;
+begin
+    new(nuevo);
+    nuevo^.dato := reg;
+    nuevo^.sig := nil;
+    act := l;
+    ant := nil;
+
+    while (act <> nil) and (reg.DNI > act^.dato.DNI) do
+    begin
+        ant := act;
+        act := act^.sig;
+    end;
+
+    if (ant = nil) then
+    begin
+        nuevo^.sig := l;
+        l := nuevo;
+    end
+    else
+    begin
+        nuevo^.sig := act;
+        ant^.sig := nuevo;
+    end;
+end;
+
+procedure procesarPolizas(var ab: arbol);
+var
+    reg: Poliza;
+begin
+    leer(reg);
+    while (reg.DNI <> -1) do
+    begin
+        cargarArbol(ab, reg);
+        leer(reg);
+    end;
+end;
+
+procedure cargarVector(ab: arbol; var vec: vec; valor: integer);
+begin
+    if (ab <> nil) then
+    begin
+        if (ab^.dato.suma > valor) then
+            cargarVector(ab^.hi, vec, valor)
+        else
+        begin
+            if (ab^.dato.suma < valor) then
+                InsertarOrdenado(vec[ab^.dato.anio], ab^.dato);
+            cargarVector(ab^.hd, vec, valor);
+        end;
+    end;
+end;
+
+procedure cantPolizas(DNI: integer; var cant: integer; vec: vec);
+var
+    i: integer;
+    act: list;
+begin
+    cant := 0;
+    for i := 2000 to 2023 do
+    begin
+        act := vec[i];
+        while (act <> nil) and (act^.dato.DNI <= DNI) do
+        begin
+            if (act^.dato.DNI = DNI) then
+                cant := cant + 1;
+            act := act^.sig;
+        end;
+    end;
+    writeln('La cantidad de pólizas del cliente con DNI: ', DNI, ' es de: ', cant);
+end;
+
+var
+    DNI, cant: integer;
+    x: real;
+    ab: arbol;
+    vec: vec;
+begin
+    randomize;
+    ab := nil;
+    inicioVec(vec);
+    procesarPolizas(ab);
+    writeln('Insertar el valor de las sumas aseguradas a tomar en cuenta para la carga del vector: ');
+    readln(x);
+    cargarVector(ab, vec, trunc(x));
+    writeln('Insertar DNI a contar pólizas: ');
+    readln(DNI);
+    cantPolizas(DNI, cant, vec);
+end.

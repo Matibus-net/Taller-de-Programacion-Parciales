@@ -1,0 +1,207 @@
+program parcial;
+
+type 
+    
+    fech=record
+        dia:integer;
+        mes:integer;
+        anio:integer;
+    end;
+    
+    pedido=record
+        DNI:integer;
+        nombre:string;
+        fecha:fech;
+        monto:real;
+    end;
+    
+    reg=record
+        fecha:fech;
+        monto:real;
+    end;
+    
+    list=^nodol;
+    nodol=record
+        dato:reg;
+        sig:list;
+    end;
+    
+    regA=record
+        DNI:integer;
+        nombre:string;
+        lista:list;
+    end;
+    
+    arbol=^nodo;
+    nodo=record
+        dato:regA;
+        hi:arbol;
+        hd:arbol;
+    end;
+    
+    procedure leerFecha(var f:fech);
+    begin
+        f.dia:=random(31)+1;
+        f.mes:=random(12)+1;
+        f.anio:=random(25)+2000;
+    end;
+    
+    
+    procedure leerPedido(var P:pedido);
+    begin
+        P.monto:=random(50);
+        if(P.monto<>0)then begin
+            leerFecha(P.fecha);
+            P.DNI:=random(500)+1;
+            P.nombre:= 'Juan';
+        end;
+    end;
+    
+    procedure agregarAdelante(var l:list; r:reg);
+    var nue:list;
+    begin
+        new(nue);
+        nue^.dato:=r;
+        nue^.sig:=l;
+        l:=nue;
+    end;
+    
+    procedure cargarArbol(var ab:arbol; reg:pedido);
+    var
+        r:reg;
+    begin
+        if(ab=nil)then 
+        begin
+            new(ab);
+            ab^.dato.DNI:=reg.DNI;
+            ab^.dato.nombre:=reg.nombre;
+            ab^.dato.lista:=nil;
+            r.fecha:=reg.fecha;
+            r.monto:=reg.monto;
+            agregarAdelante(ab^.dato.lista,r);
+            ab^.hi:=nil;
+            ab^.hd:=nil;
+        end
+        else begin
+            if(ab^.dato.DNI=reg.DNI)then begin
+                r.fecha:=reg.fecha;
+                r.monto:=reg.monto;
+                agregarAdelante(ab^.dato.lista,r);
+            end
+            else begin
+                if(ab^.dato.DNI>reg.DNI)then
+                    cargarArbol(ab^.hi,reg)
+                else
+                    cargarArbol(ab^.hd,reg);
+                end;
+            end;
+    end;
+
+    procedure procesarArbol (var ab:arbol);
+    var r:pedido;
+    begin
+        leerPedido(r);
+        while(r.monto<>0)do begin
+            cargarArbol(ab,r);
+            leerPedido(r);
+        end;
+    end;
+
+    procedure imprimirLista(l:list);
+    begin
+        while(l<>nil)do
+        begin
+            writeln('Dia: ',l^.dato.fecha.dia,' Mes: ',l^.dato.fecha.mes,' Año: ',l^.dato.fecha.anio,' Monto: ',l^.dato.monto:0:2);
+            l:=l^.sig;
+        end;
+    end;
+    
+    procedure imprimirArbol(a:arbol);
+    begin
+        if(a<>nil)then begin
+            imprimirArbol(a^.hi);
+            writeln('DNI: ',a^.dato.DNI,' Nombre: ',a^.dato.nombre);
+            imprimirLista(a^.dato.lista);
+            writeln();
+            imprimirArbol(a^.hd);
+        end;
+    end;
+    
+    function existe(l:list;f:fech): boolean;
+    var ok:boolean;
+    begin
+        ok:=false;
+        while(l<>nil)and(not ok ) do begin
+            if(f.dia=l^.dato.fecha.dia)and(f.mes=l^.dato.fecha.mes)and(f.anio=l^.dato.fecha.anio)then
+                ok:=true;
+            l:=l^.sig;
+        end;
+        existe:=ok;
+    end;
+    
+    procedure cantClientes(ab:arbol;f:fech;var cant:integer);
+    begin
+        if(ab<>nil)then begin
+            cantClientes(ab^.hi,f,cant);
+            if(existe(ab^.dato.lista,f))then 
+                cant:=cant+1;
+            cantClientes(ab^.hd,f,cant);
+        end;
+    end;
+    
+    procedure clientesFecha( ab:arbol);
+    var
+        fecha:fech;
+        cant:integer;
+    begin
+        cant:=0;
+        writeln('dia: ');
+        readln(fecha.dia);
+        writeln('mes: ');
+        readln(fecha.mes);
+        writeln('año: ');
+        readln(fecha.anio);
+        cantClientes(ab,fecha,cant);
+        writeln('la cantidad de clientes q realizaron pedidos en esa fecha fue de: ',cant);
+    end;
+    
+    function contarMonto( l:list): real;
+    var cant:real;
+    begin
+        cant:=0;
+        while(l<>nil)do begin
+            cant:=cant+l^.dato.monto;
+            l:=l^.sig;
+        end;
+        contarMonto:=cant;
+    end;
+    
+    
+    procedure montoDNI (ab:arbol;var m:real;dni:integer);
+    begin
+        if(ab<>nil)then begin
+            if(ab^.dato.DNI>=dni)then
+                montoDNI(ab^.hi,m,dni);
+            if(ab^.dato.DNI=dni)then
+                m:=m+contarMonto(ab^.dato.lista);
+            if(ab^.dato.DNI<=dni)then
+                montoDNI(ab^.hd,m,dni);
+        end;
+    end;
+    
+var
+ab:arbol;
+m:real;
+dni:integer;
+begin
+randomize;
+ab:=nil;
+procesarArbol(ab);
+imprimirArbol(ab);
+clientesFecha(ab);
+writeln('Insertar DNI: ');
+readln(dni);
+m:=0;
+montoDNI(ab,m,dni);
+writeln('Monto de la persona con DNI: ',dni,' / ',m:0:2);
+end.

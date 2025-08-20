@@ -1,0 +1,130 @@
+program parcial;
+
+type
+    dia=0..31;
+    mes=1..12;
+    hora=1..8;
+    
+    reg=record
+        num:integer;
+        dia:dia;
+        mes:mes;
+        horas:hora;
+    end;
+    
+    arbol=^nodo;
+    nodo=record
+        dato:reg;
+        hi:arbol;
+        hd:arbol;
+    end;
+    
+    list=^nodol;
+    nodol=record
+        dato:reg;
+        sig:list;
+    end;
+    
+    procedure leerRegistros (var reg:reg);
+    begin
+        reg.dia:=random(32);
+        if(reg.dia<>0)then
+        begin
+            reg.mes:=random(12)+1;
+            reg.horas:=random(8)+1;
+            reg.num:=random(50)+1;
+        end;
+    end;
+    
+    procedure cargarArbol (var ab:arbol; reg:reg);
+    begin
+        if(ab=nil)then
+        begin
+            new(ab);
+            ab^.hi:=nil;
+            ab^.hd:=nil;
+            ab^.dato:=reg;
+        end
+        else begin
+            if(ab^.dato.num>reg.num)then
+                cargarArbol(ab^.hi,reg)
+            else
+                cargarArbol(ab^.hd,reg);
+        end;
+    end;
+            
+    
+    procedure procesar (var ab:arbol);
+    var
+        regs:reg;
+    begin
+        leerRegistros(regs);
+        while(regs.dia<>0)do
+        begin
+            cargarArbol(ab,regs);
+            leerRegistros(regs);
+        end;
+    end;
+    
+    procedure agregarAdelante (var L : list; R : reg);
+    var nuevo : list;
+    begin
+    new (nuevo);
+    nuevo^.dato := R;
+    nuevo^.sig := L;
+    L := nuevo;
+    end;
+    
+    procedure regEntreValores(var l: list; ab: arbol; x, y: integer);
+    begin
+        if (ab <> nil) then
+        begin
+            if (ab^.dato.num >= x) then
+                regEntreValores(l, ab^.hi, x, y);
+                
+            if (ab^.dato.num >= x) and (ab^.dato.num <= y) then
+                agregarAdelante(l, ab^.dato);
+                
+            if (ab^.dato.num <= y) then
+                regEntreValores(l, ab^.hd, x, y);
+        end;
+    end;
+        
+    function contarHoras(l: list): integer;
+    begin
+        if (l = nil) then
+            contarHoras := 0
+        else
+            contarHoras := l^.dato.horas + contarHoras(l^.sig);
+    end;
+    procedure imprimirReg(regs:reg);
+    begin
+        writeln('num: ',regs.num,' dia: ',regs.dia,' mes: ',regs.mes, ' horas: ',regs.horas);
+    end;
+    
+    procedure imprimirArbol(ab:arbol);
+    begin
+        if(ab<>nil)then
+        begin
+            imprimirArbol(ab^.hi);
+            imprimirReg(ab^.dato);
+            imprimirArbol(ab^.hd);
+        end;
+    end;
+var
+l:list;
+ab:arbol;
+x,y:integer;
+
+begin
+ab:=nil;
+l:=nil;
+procesar(ab);
+imprimirArbol(ab);
+writeln('Insertar un valor x de numero de empleado: ');
+readln(x);
+writeln('Insertar un valor y de numero de empleado mayor a x: ');
+readln(y);
+regEntreValores(l,ab,x,y);
+writeln('cantidad de horas trabajadas: ',contarHoras(l));
+end.
