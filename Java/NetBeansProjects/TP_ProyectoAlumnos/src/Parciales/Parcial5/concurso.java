@@ -1,0 +1,40 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package Parciales;
+
+/**
+ *
+ * @author Usuario
+ */
+public class concurso {
+    private pareja[] parejas;
+    private int n;
+    private int diml=0;
+
+    public concurso(int n) {
+        this.n = n;
+        parejas=new pareja[n];
+    }
+    
+    public void agregarPareja(pareja p){
+        if(n-diml>0){
+            parejas[diml]=p;
+            diml++;
+        }
+        else System.out.println("No hay lugar en el concurso");
+    }
+    public pareja diferenciaMayor(){
+        int max=0;
+        pareja p=null;
+        for (int i=0;i<diml;i++){
+            if(max<parejas[i].diferenciaEdad()){
+                max=parejas[i].diferenciaEdad();
+                p=parejas[i];
+            }
+        }
+        return p;
+    }
+}
