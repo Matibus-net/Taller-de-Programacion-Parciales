@@ -37,6 +37,7 @@ public abstract class Empleado {
     public double getSueldo() {
         return sueldo;
     }
+    public abstract double sueldoCobrar();
     @Override
     public String toString(){
         String st="Nombre: "+this.getNombre()+" DNI: "+this.getDni();
