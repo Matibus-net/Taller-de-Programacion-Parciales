@@ -9,7 +9,7 @@ package Parciales;
  *
  * @author Usuario
  */
-public class Empleado {
+public abstract class Empleado {
     private String nombre;
     private int dni;
     private int añoIngreso;
