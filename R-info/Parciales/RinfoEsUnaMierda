@@ -1,0 +1,154 @@
+programa BuscemiMatias
+procesos 
+  proceso juntarFlores(ES flor:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flor:=flor+1
+  fin
+  proceso juntarPapel(ES papel:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papel:=papel+1
+  fin
+areas
+  AreaF:AreaP(1,1,1,1)
+  AreaF11:AreaP(6,1,6,1)
+  AreaT:AreaPC(6,2,6,20)
+  AreaT2:AreaPC(11,2,11,20)
+  AreaF12:AreaP(6,21,6,100)
+  AreaF21:AreaP(11,1,11,1)
+  AreaF22:AreaP(11,21,11,100)
+  AreaP1:AreaP(1,2,5,20)
+  AreaP2:AreaP(7,2,10,20)
+  AreaP3:AreaP(12,2,100,20)
+  AreaP4:AreaP(2,1,2,1)
+robots
+  robot florero
+  variables
+    flores,id,avi,ca:numero
+    ok:boolean
+  comenzar
+    avi:=PosAv
+    RecibirMensaje(id,robotF)
+    RecibirMensaje(ca,robotF)
+    juntarFlores(flores)
+    repetir (ca+-2)
+      mover
+      juntarFlores(flores)
+    BloquearEsquina(avi,ca)
+    mover
+    juntarFlores(flores)
+    mover
+    LiberarEsquina(avi,ca)
+    repetir (99+-ca)
+      mover
+      juntarFlores(flores)
+    EnviarMensaje(id,robotF)
+    EnviarMensaje(flores,robotF)
+    RecibirMensaje(ok,robotF)
+    si(ok)
+      Pos(avi,1)
+  fin
+  robot papelero
+  variables
+    papel,id,ca:numero
+    ok:boolean
+  comenzar
+    derecha
+    RecibirMensaje(id,robotF)
+    RecibirMensaje(ca,robotF)
+    Pos(1,ca)
+    juntarPapel(papel)
+    repetir 4 
+      mover
+      juntarPapel(papel)
+    BloquearEsquina(6,ca)
+    mover
+    juntarPapel(papel)
+    mover
+    LiberarEsquina(6,ca)
+    juntarPapel(papel)
+    repetir 3
+      mover
+      juntarPapel(papel)
+    BloquearEsquina(11,ca)
+    mover
+    juntarPapel(papel)
+    mover
+    LiberarEsquina(11,ca)
+    juntarPapel(papel)
+    repetir 88
+      mover
+      juntarPapel(papel)
+    EnviarMensaje(id,robotF)
+    EnviarMensaje(papel,robotF)
+    RecibirMensaje(ok,robotF)
+    si(ok)
+      Pos(1,ca)
+  fin
+  robot fiscal
+  variables 
+    f1,f2,p,num:numero
+  comenzar 
+    EnviarMensaje(1,robotF1)
+    EnviarMensaje(2,robotF2)
+    EnviarMensaje(3,robotP) 
+    Random(num,2,20)
+    EnviarMensaje(num,robotF1)
+    EnviarMensaje(num,robotF2)
+    EnviarMensaje(num,robotP)
+    repetir 3
+      RecibirMensaje(num,*)
+      si(num=1)
+        RecibirMensaje(f1,robotF1)
+      sino
+        si(num=2)
+          RecibirMensaje(f2,robotF2)
+        sino
+          RecibirMensaje(p,robotP)
+    si(f1>f2)
+      si(f1>p)
+        EnviarMensaje(V,robotF1)
+        EnviarMensaje(F,robotF2)
+        EnviarMensaje(F,robotP)
+      sino
+        EnviarMensaje(V,robotP)
+        EnviarMensaje(F,F1)
+        EnviarMensaje(F,F2)
+    sino
+      si(f2>p)
+        EnviarMensaje(V,robotF2)
+        EnviarMensaje(F,robotF1)
+        EnviarMensaje(F,robotP)
+      sino
+        EnviarMensaje(V,robotP)
+        EnviarMensaje(F,robotF1)
+        EnviarMensaje(F,robotF2)
+  fin
+variables
+  robotF1,robotF2:florero
+  robotP:papelero
+  robotF:fiscal
+comenzar
+  AsignarArea(robotF1,AreaF11)
+  AsignarArea(robotF1,AreaF12)
+  AsignarArea(robotF1,AreaT)
+  AsignarArea(robotF1,AreaT2)
+  AsignarArea(robotF2,AreaF21)
+  AsignarArea(robotF2,AreaF22)
+  AsignarArea(robotF2,AreaT)
+  AsignarArea(robotF2,AreaT2)
+  AsignarArea(robotP,AreaP1)
+  AsignarArea(robotP,AreaP2)
+  AsignarArea(robotP,AreaP3)
+  AsignarArea(robotP,AreaT)
+  AsignarArea(robotP,AreaP4)
+  AsignarArea(robotP,AreaT2)
+  AsignarArea(robotF,AreaF)
+  Iniciar(robotF,1,1)
+  Iniciar(robotF1,6,1)
+  Iniciar(robotF2,11,1)
+  Iniciar(robotP,2,1)
+fin    

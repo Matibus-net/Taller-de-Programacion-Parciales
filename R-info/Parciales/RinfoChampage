@@ -1,0 +1,170 @@
+programa MatiasBuscemi
+procesos
+  proceso juntar(ES flores:numero;ES papeles:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:=flores+1
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papeles:=papeles+1
+  fin
+  proceso recorridoH(ES flor:numero;ES papel:numero)
+  variables
+    av:numero
+  comenzar
+    repetir 2
+      juntar(flor,papel)
+      mover
+    derecha
+    repetir 4
+      av:=PosAv+1
+      BloquearEsquina(av,PosCa)
+      juntar(flor,papel)
+      mover
+      juntar(flor,papel)
+      mover
+      LiberarEsquina(av,PosCa)
+    derecha
+    repetir 2
+      juntar(flor,papel)
+      mover
+    derecha
+    repetir 4
+      av:=PosAv+-1
+      BloquearEsquina(av,PosCa)
+      juntar(flor,papel)
+      mover
+      juntar(flor,papel)
+      mover
+      LiberarEsquina(av,PosCa)
+    derecha
+
+  fin
+  proceso recorridoV(ES flor:numero;ES papel:numero)
+  variables
+    ca:numero
+  comenzar
+    repetir 4
+      ca:=PosCa+1
+      BloquearEsquina(PosAv,ca)
+      juntar(flor,papel)
+      mover
+      juntar(flor,papel)
+      mover
+      LiberarEsquina(PosAv,ca)
+    derecha 
+    repetir 2
+      juntar(flor,papel)
+      mover
+    derecha
+    repetir 4
+      ca:=PosCa+-1
+      BloquearEsquina(PosAv,ca)
+      juntar(flor,papel)
+      mover
+      juntar(flor,papel)
+      mover
+      LiberarEsquina(PosAv,ca)
+    derecha 
+    repetir 2
+      juntar(flor,papel)
+      mover
+    derecha
+
+  fin
+areas
+  Area: AreaPC(1,1,9,9)
+  ini1:AreaP(20,1,20,1)
+  ini2:AreaP(20,2,20,2)
+  ini3:AreaP(20,4,20,4)
+  ini4:AreaP(20,5,20,5)
+  ini5:AreaP(20,15,20,15)
+robots
+  robot laburante
+  variables
+    flor,papel:numero
+    av,ca:numero
+    id:numero 
+  comenzar
+    flor:=0
+    papel:=0
+    RecibirMensaje(av,jefe)
+    RecibirMensaje(ca,jefe)
+    RecibirMensaje(id,jefe) 
+    Pos(av,ca)
+    si(PosAv=1)
+      recorridoH(flor,papel)
+    sino
+      recorridoV(flor,papel)
+    EnviarMensaje(id,jefe)
+    EnviarMensaje(flor,jefe)
+    EnviarMensaje(papel,jefe)
+  fin
+  robot jefe
+  variables
+    flores,papeles:numero
+    num:numero
+  comenzar
+    flores:=0
+    papeles:=0
+    EnviarMensaje(1,robot1)
+    EnviarMensaje(1,robot2)
+    EnviarMensaje(2,robot3)
+    EnviarMensaje(6,robot4)
+    
+    EnviarMensaje(2,robot1)
+    EnviarMensaje(6,robot2)
+    EnviarMensaje(1,robot3)
+    EnviarMensaje(1,robot4)
+    
+    EnviarMensaje(1,robot1)
+    EnviarMensaje(2,robot2)
+    EnviarMensaje(3,robot3)
+    EnviarMensaje(4,robot4)
+    repetir 4
+      RecibirMensaje(num,*)
+      si(num=1)
+        RecibirMensaje(num,robot1)
+        flores:=flores+num
+        RecibirMensaje(num,robot1)
+        papeles:=papeles+num
+      sino
+        si(num=2)
+          RecibirMensaje(num,robot2)
+          flores:=flores+num
+          RecibirMensaje(num,robot2)
+          papeles:=papeles+num
+        sino
+          si(num=3)
+            RecibirMensaje(num,robot3)
+            flores:=flores+num
+            RecibirMensaje(num,robot3)
+            papeles:=papeles+num
+          sino
+            RecibirMensaje(num,robot4)
+            flores:=flores+num
+            RecibirMensaje(num,robot4)
+            papeles:=papeles+num
+    Informar(flores)
+    Informar(papeles)
+  fin
+variables
+  robot1,robot2,robot3,robot4:laburante
+  jefe:jefe
+comenzar
+  AsignarArea(robot1,ini1)
+  AsignarArea(robot2,ini2)
+  AsignarArea(robot3,ini3)
+  AsignarArea(robot4,ini4)
+  AsignarArea(jefe,ini5)
+  AsignarArea(robot1,Area)
+  AsignarArea(robot2,Area)
+  AsignarArea(robot3,Area)
+  AsignarArea(robot4,Area)
+  Iniciar(robot1,20,1)
+  Iniciar(robot2,20,2)
+  Iniciar(robot3,20,4)
+  Iniciar(robot4,20,5)
+  Iniciar(jefe,20,15)
+fin    

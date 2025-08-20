@@ -1,0 +1,133 @@
+programa matiasBuscemi
+procesos 
+  proceso unaFlor
+  variables
+    av,ca:numero
+  comenzar
+    repetir 5
+      BloquearEsquina(18,13)
+      Pos(18,13)
+      tomarFlor
+      Random(av,11,15)
+      Random(ca,11,15)
+      Pos(av,ca)
+      LiberarEsquina(18,13)
+      depositarFlor
+  fin
+  proceso unPapel
+  variables
+    av,ca:numero
+  comenzar
+    repetir 5
+      BloquearEsquina(18,13)
+      Pos(18,13)
+      tomarPapel
+      Random(av,21,25)
+      Random(ca,11,15)
+      Pos(av,ca)
+      LiberarEsquina(18,13)
+      depositarPapel
+  fin
+  proceso buscarPapel(ES ok:boolean)
+  variables
+    av,ca:numero
+  comenzar
+    mientras(ok)
+      Random(av,21,25)
+      Random(ca,11,15)
+      Pos(av,ca)
+      si(HayPapelEnLaEsquina)
+        tomarPapel 
+        ok:=F 
+  fin
+  proceso buscarFlor(ES ok:boolean)
+  variables
+    av,ca:numero
+  comenzar
+    mientras(ok)
+      Random(av,11,15)
+      Random(ca,11,15)
+      Pos(av,ca)
+      si(HayFlorEnLaEsquina)
+        tomarFlor 
+        ok:=F 
+  fin
+areas
+  ini1:AreaP(2,2,2,2)
+  ini2:AreaP(3,3,3,3)
+  ini3:AreaP(1,1,1,1)
+  fuente:AreaPC(18,13,18,13)
+  AreaA: AreaPC(11,11,15,15)
+  AreaB: AreaPC(21,11,25,15)
+robots
+  robot florero
+  variables
+    id:numero
+    ok:boolean
+  comenzar
+    RecibirMensaje(id,robotF)
+    unaFlor
+    EnviarMensaje(V,robotF)
+    RecibirMensaje(ok,robotF)
+    buscarPapel(ok)
+    BloquearEsquina(18,13)
+    Pos(18,13)
+    depositarPapel
+    EnviarMensaje(id,robotF)
+    Pos(2,2)
+    LiberarEsquina(18,13)
+  fin
+  robot papelero
+  variables
+    id:numero
+    ok:boolean
+  comenzar
+    RecibirMensaje(id,robotF)
+    unPapel
+    EnviarMensaje(V,robotF)
+    RecibirMensaje(ok,robotF)
+    buscarFlor(ok)
+    BloquearEsquina(18,13)
+    Pos(18,13)
+    depositarFlor
+    EnviarMensaje(id,robotF)
+    Pos(3,3)
+    LiberarEsquina(18,13)
+  fin
+  robot fiscal
+  variables
+    ganador,n:numero
+    ok:boolean
+  comenzar
+    EnviarMensaje(1,robot1)
+    EnviarMensaje(2,robot2)   
+    repetir 2
+      RecibirMensaje(ok,*)
+    EnviarMensaje(V,robot1)
+    EnviarMensaje(V,robot2)
+    RecibirMensaje(ganador,*)
+    RecibirMensaje(n,*)
+    Informar(ganador)
+  fin
+variables
+  robot1:florero
+  robot2:papelero
+  robotF:fiscal
+comenzar
+  AsignarArea(robot1,ini1)
+  AsignarArea(robot2,ini2)
+  AsignarArea(robotF,ini3)
+  AsignarArea(robot1,fuente)
+  AsignarArea(robot2,fuente)
+  AsignarArea(robot1,AreaA)
+  AsignarArea(robot2,AreaA)
+  AsignarArea(robot1,AreaB)
+  AsignarArea(robot2,AreaB)
+  Iniciar(robot1,2,2)
+  Iniciar(robot2,3,3)
+  Iniciar(robotF,1,1)
+fin
+      
+    
+    
+    

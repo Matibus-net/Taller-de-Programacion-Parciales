@@ -1,0 +1,174 @@
+programa MatiasBuscemi
+procesos
+  proceso papel
+  variables
+    av,ca:numero
+  comenzar
+    av:=PosAv
+    ca:=PosCa
+    repetir 12
+      BloquearEsquina(15,15)
+      Pos(15,15)
+      tomarPapel
+      Pos(av,ca)
+      LiberarEsquina(15,15)
+  fin
+  proceso flor
+  variables
+    av,ca:numero
+  comenzar
+    av:=PosAv
+    ca:=PosCa
+    repetir 4
+      BloquearEsquina(15,15)
+      Pos(15,15)
+      tomarFlor
+      Pos(av,ca)
+      LiberarEsquina(15,15)
+  fin
+  proceso vertical
+  comenzar
+    repetir 10
+      si(~HayPapelEnLaEsquina)
+        depositarPapel
+      mover
+      si(~HayPapelEnLaEsquina)
+        depositarPapel
+
+  fin
+  proceso horizontal
+  comenzar
+    repetir 2
+      si(~HayFlorEnLaEsquina)
+        depositarFlor
+      mover
+    si(~HayFlorEnLaEsquina)
+      depositarFlor
+  fin
+areas
+  esquina1: AreaPC(5,4,5,4)
+  esquina2:AreaPC(11,4,11,4)
+  
+  ini1:AreaP(50,50,50,50)
+  ini3:AreaP(51,51,51,51)
+  ini2:AreaP(52,52,52,52)
+  ini4:AreaP(53,53,53,53)
+  ini5:AreaP(1,1,1,1)
+  
+  esquinaR:AreaPC(15,15,15,15)
+  
+  Area1:AreaP(5,5,5,15) 
+  Area3:AreaP(6,4,8,4)
+  Area2:AreaP(11,5,11,15)
+  Area4:AreaP(12,4,14,4)
+robots
+  robot verti
+  variables
+    id:numero
+  comenzar
+    RecibirMensaje(id,robotF)
+    papel
+    si(id=1)
+      BloquearEsquina(5,4)
+      Pos(5,4)
+      si(~HayPapelEnLaEsquina)
+        depositarPapel
+      mover
+      LiberarEsquina(5,4)
+    sino
+      BloquearEsquina(11,4)
+      Pos(11,4)
+      si(~HayPapelEnLaEsquina)
+        depositarPapel
+      mover
+      LiberarEsquina(11,4)
+    vertical
+    EnviarMensaje(id,robotF)
+  fin
+  robot hori
+  variables
+    id:numero
+  comenzar
+    RecibirMensaje(id,robotF)
+    flor
+    derecha
+    si(id=1)
+      BloquearEsquina(5,4)
+      Pos(5,4)
+      si(~HayFlorEnLaEsquina)
+        depositarFlor
+      mover
+      LiberarEsquina(5,4)
+    sino
+      BloquearEsquina(11,4)
+      Pos(11,4)
+      si(~HayFlorEnLaEsquina)
+        depositarFlor
+      mover
+      LiberarEsquina(11,4)
+    horizontal
+    EnviarMensaje(id,robotF)
+  fin 
+  robot fiscal
+  variables
+    gano,i1,i2,num:numero
+    ok:boolean
+  comenzar
+    ok:=V
+    i1:=0
+    i2:=0
+    EnviarMensaje(1,robot1) 
+    EnviarMensaje(2,robot2)  
+    EnviarMensaje(1,robot3) 
+    EnviarMensaje(2,robot4) 
+    repetir 4
+      RecibirMensaje(num,*)
+      si(num=1)
+        i1:=i1+1
+      sino
+        i2:=i2+1
+      si(ok)
+        si(i1=2)
+          gano:=1
+          ok:=F
+        sino
+          si(i2=2)
+            gano:=2
+            ok:=F
+    Informar(gano)
+  fin
+variables
+  robot1,robot2:verti
+  robot3,robot4:hori
+  robotF:fiscal
+comenzar
+  AsignarArea(robot1,ini1)
+  AsignarArea(robot2,ini2)
+  AsignarArea(robot3,ini3)
+  AsignarArea(robot4,ini4)
+  
+  AsignarArea(robot1,Area1)
+  AsignarArea(robot2,Area2)
+  AsignarArea(robot3,Area3)
+  AsignarArea(robot4,Area4)
+  
+  AsignarArea(robotF,ini5)
+  
+  AsignarArea(robot1,esquina1)
+  AsignarArea(robot2,esquina2)
+  AsignarArea(robot3,esquina1)
+  AsignarArea(robot4,esquina2)
+  
+  AsignarArea(robot1,esquinaR)
+  AsignarArea(robot2,esquinaR)
+  AsignarArea(robot3,esquinaR)
+  AsignarArea(robot4,esquinaR)
+
+  
+  Iniciar(robot1,50,50)
+  Iniciar(robot2,52,52)
+  Iniciar(robot3,51,51)
+  Iniciar(robot4,53,53)
+  Iniciar(robotF,1,1)
+fin
+

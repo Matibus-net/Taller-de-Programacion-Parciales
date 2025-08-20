@@ -1,0 +1,178 @@
+programa MatiBuscemi
+procesos
+  proceso juntarFlores(ES flores:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:=flores+1
+  fin
+  
+  proceso rectanguloDos(ES flores:numero;E ancho:numero)
+  comenzar
+    repetir 2
+      repetir 15
+        depositarFlor
+        mover
+      derecha
+      repetir ancho
+        depositarFlor
+        mover
+      derecha
+  fin
+  proceso rectangulo(ES flores:numero; E ancho:numero)
+  comenzar
+    repetir 2
+      repetir 15 
+        juntarFlores(flores)
+        mover
+      derecha
+      repetir ancho
+        juntarFlores(flores)
+        mover
+      derecha
+  fin
+
+  proceso dejarUna(E avE:numero;E caE:numero)
+  variables
+    av,ca:numero
+  comenzar
+    av:=PosAv
+    ca:=PosCa
+    mientras (HayFlorEnLaBolsa)
+      BloquearEsquina(avE,caE)
+      Pos(avE,caE)
+      depositarFlor
+      Pos(av,ca)
+      LiberarEsquina(avE,caE)
+  fin
+  
+  proceso juntarUna(E flores:numero;E avE:numero;E caE:numero)
+  variables
+    av:numero
+    ca:numero
+  comenzar
+    av:=PosAv
+    ca:=PosCa
+    repetir flores
+      BloquearEsquina(avE,caE)
+      Pos(avE,caE)
+      tomarFlor
+      Pos(av,ca)
+      LiberarEsquina(avE,caE)
+  fin
+areas
+  ini1:AreaP(1,1,1,1)
+  ini2:AreaP(2,2,2,2)
+  ini3:AreaP(3,3,3,3)
+  ini4:AreaP(4,4,4,4)
+  ini5:AreaP(5,5,5,5)
+  Area1:AreaPC(1,10,100,25)
+  Area2:AreaPC(1,30,100,45)
+robots
+  robot floreroCorredor
+  variables
+    id,A,v,flores:numero
+    avI,caI:numero
+  comenzar
+    flores:=0
+    avI:=PosAv
+    caI:=PosCa
+    RecibirMensaje(A,robotF)
+    RecibirMensaje(v,robotF)
+    RecibirMensaje(id,robotF)
+    Informar(id)
+    si(id=1)
+      Pos(v,10)
+      rectangulo(flores,A)
+      dejarUna(5,15)
+    sino
+      Pos(v,30)
+      rectangulo(flores,A)
+      dejarUna(5,40)
+    Pos(avI,caI)
+    si(id=1)
+      EnviarMensaje(flores,robot3)
+    sino
+      EnviarMensaje(flores,robot4)
+  fin
+  robot floreroRecolector
+  variables
+    A,v,id,flores,avI,caI:numero
+  comenzar
+    avI:=PosAv
+    caI:=PosCa
+    RecibirMensaje(A,robotF)
+    RecibirMensaje(v,robotF)
+    RecibirMensaje(id,robotF)
+    si(id=3)
+      RecibirMensaje(flores,robot1)
+      juntarUna(flores,5,15)
+      Pos(v,10)
+      rectanguloDos(flores,A)
+    sino
+      RecibirMensaje(flores,robot2)
+      juntarUna(flores,5,40)
+      Pos(v,30)
+      rectanguloDos(flores,A)
+    Pos(avI,caI)
+    EnviarMensaje(id,robotF)
+  fin
+  robot fiscal
+  variables 
+    Gano,num:numero
+  comenzar
+    Random(num,1,5)
+    EnviarMensaje(num,robot1)
+    EnviarMensaje(num,robot3)
+    Random(num,1,5)
+    EnviarMensaje(num,robot2)
+    EnviarMensaje(num,robot4)
+    
+    Random(num,1,95)
+    EnviarMensaje(num,robot1)
+    EnviarMensaje(num,robot3)
+    Random(num,1,95)
+    EnviarMensaje(num,robot2)
+    EnviarMensaje(num,robot4)
+    
+    EnviarMensaje(1,robot1)
+    EnviarMensaje(3,robot3)
+    EnviarMensaje(2,robot2)
+    EnviarMensaje(4,robot4)
+    
+    RecibirMensaje(Gano,*)
+    RecibirMensaje(num,*)
+    
+    si(Gano=3)
+      Informar(1) 
+    sino
+      Informar(2)
+  fin
+variables
+  robot1,robot2:floreroCorredor
+  robot3,robot4:floreroRecolector
+  robotF:fiscal
+comenzar
+  AsignarArea(robot1,ini1)
+  AsignarArea(robot2,ini2)
+  AsignarArea(robot3,ini3)
+  AsignarArea(robot4,ini4)
+  AsignarArea(robotF,ini5)
+  
+  AsignarArea(robot1,Area1)
+  AsignarArea(robot2,Area2)
+  AsignarArea(robot3,Area1)
+  AsignarArea(robot4,Area2)
+
+  Iniciar(robot1,1,1)
+  Iniciar(robot2,2,2)
+  Iniciar(robot3,3,3)
+  Iniciar(robot4,4,4)
+  Iniciar(robotF,5,5)
+fin    
+
+    
+
+
+
+    

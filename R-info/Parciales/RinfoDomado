@@ -1,0 +1,117 @@
+programa BuscemiMatias
+procesos 
+  proceso juntarPapeles(ES papel:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papel:=papel+1
+  fin
+  proceso depositarDeAUno(E papel:numero)
+  variables
+    av,ca:numero
+  comenzar
+    av:=PosAv
+    ca:=PosCa
+    repetir papel
+      BloquearEsquina(1,30)
+      Pos(1,30)
+      depositarPapel
+      Pos(av,ca)
+      LiberarEsquina(1,30)
+  fin
+areas
+  AreaF: AreaP(25,1,25,1)
+  AreaP1:AreaP(1,1,7,29) 
+  AreaP11:AreaP(1,31,7,40)
+  AreaP12:AreaP(2,30,7,30)
+  AreaP2:AreaP(8,1,14,40)
+  AreaP3:AreaP(15,1,21,40)
+  esquina: AreaPC(1,30,1,30)
+robots
+  robot papelero
+  variables
+    id,papel,av,pasos,num:numero
+  comenzar
+    RecibirMensaje(id,robotF)
+    RecibirMensaje(av,robotF)
+    Pos(av,PosCa)
+    papel:=0
+    pasos:=0
+    repetir 5
+      RecibirMensaje(num,robotF)
+      pasos:=pasos+num
+      repetir num
+        juntarPapeles(papel)
+        mover
+    juntarPapeles(papel)
+    depositarDeAUno(papel)
+    EnviarMensaje(id,robotF)
+    EnviarMensaje(pasos,robotF)
+  fin
+  robot fiscal
+  variables
+    p1,p2,p3,num:numero
+  comenzar
+    EnviarMensaje(1,robot1)
+    EnviarMensaje(2,robot2)
+    EnviarMensaje(3,robot3)
+    Random(num,1,7)
+    EnviarMensaje(num,robot1)
+    Random(num,8,14)
+    EnviarMensaje(num,robot2)
+    Random(num,15,21)
+    EnviarMensaje(num,robot3)
+    repetir 5
+      Random(num,1,10)
+      EnviarMensaje(num,robot1)
+      Random(num,1,10)
+      EnviarMensaje(num,robot2)
+      Random(num,1,10)
+      EnviarMensaje(num,robot3)
+    repetir 3
+      RecibirMensaje(num,*)
+      si(num=1)
+        RecibirMensaje(p1,robot1)
+      sino
+        si(num=2)
+          RecibirMensaje(p2,robot2)
+        sino
+          RecibirMensaje(p3,robot3)
+    si(p1>p2)
+      si(p1>p3)
+        Informar(1)
+      sino
+        Informar(3)
+    sino
+      si(p2>p3)
+        Informar(2)
+      sino
+        Informar(3)
+  fin
+variables
+  robot1:papelero
+  robot2:papelero
+  robot3:papelero
+  robotF:fiscal
+comenzar
+  AsignarArea(robotF,AreaF)
+  AsignarArea(robot1,AreaP1)
+  AsignarArea(robot1,AreaP11)
+  AsignarArea(robot1,AreaP12)
+  AsignarArea(robot2,AreaP2)
+  AsignarArea(robot3,AreaP3)
+  AsignarArea(robot1,esquina)
+  AsignarArea(robot2,esquina)
+  AsignarArea(robot3,esquina)
+  Iniciar(robot1,1,1)
+  Iniciar(robot2,8,1)
+  Iniciar(robot3,15,1)
+  Iniciar(robotF,25,1)
+fin
+
+      
+    
+    
+      
+    
+  

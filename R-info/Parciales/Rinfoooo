@@ -1,0 +1,130 @@
+programa matiasBuscemi
+procesos
+  proceso juntarPapeles(ES papeles:numero)
+  comenzar
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      papeles:=papeles+1
+  fin
+  proceso juntarFlores(ES flores:numero )
+  comenzar 
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:=flores+1
+  fin
+  proceso ladoFlores(ES flor:numero)
+  comenzar
+    repetir 10 
+      juntarFlores(flor)
+      mover
+    derecha
+    repetir 9
+      juntarFlores(flor)
+      mover
+  fin
+  proceso ladoPapeles(ES papel:numero) 
+  comenzar
+    repetir 2
+      derecha
+    repetir 10
+      juntarPapeles(papel)
+      mover
+    derecha
+    repetir 9
+      juntarPapeles(papel)
+      mover
+  fin
+areas
+  AreaF:AreaP(14,6,14,6)
+  AreaF11:AreaP(3,3,3,13)
+  AreaF12:AreaP(4,13,12,13)
+  AreaF21:AreaP(16,3,16,13)
+  AreaF22:AreaP(17,13,25,13)
+  AreaP11:AreaP(13,3,13,13)
+  AreaP12:AreaP(4,3,12,3)
+  AreaP21:AreaP(26,3,26,13)
+  AreaP22:AreaP(17,3,25,3)
+robots
+  robot florero
+  variables
+    flores,id:numero
+  comenzar
+    RecibirMensaje(id,robotF)
+    flores:=0
+    ladoFlores(flores)
+    EnviarMensaje(id,robotF)
+    EnviarMensaje(flores,robotF)
+  fin
+  robot papelero
+  variables
+    papeles,id:numero
+  comenzar
+    RecibirMensaje(id,robotF)
+    papeles:=0
+    ladoPapeles(papeles)
+    EnviarMensaje(id,robotF)
+    EnviarMensaje(papeles,robotF)
+  fin
+  robot fiscal
+  variables
+    objetos,num,equipo1,equipo2:numero
+    ok:boolean
+  comenzar
+    EnviarMensaje(1,robotF1)
+    EnviarMensaje(2,robotF2)
+    EnviarMensaje(3,robotP1)
+    EnviarMensaje(4,robotP2)
+    objetos:=0
+    equipo1:=0
+    ok:=V
+    equipo2:=0
+    repetir 4
+      RecibirMensaje(num,*)
+      si(num=1)
+        equipo1:=equipo1+1
+        RecibirMensaje(num,robotF1)
+      sino
+        si(num=2)
+          equipo2:=equipo2+1
+          RecibirMensaje(num,robotF2)
+        sino
+          si(num=3)
+            equipo1:= equipo1+1
+            RecibirMensaje(num,robotP1)
+          sino
+            equipo2:= equipo2+1
+            RecibirMensaje(num,robotP2)
+      si(ok)
+        si(equipo1=2)
+          Informar(1)
+          ok:=F
+        sino
+          si(equipo2=2)
+            Informar(2)
+            ok:=F
+      objetos:=objetos+num
+    Informar(objetos)
+  fin
+variables
+  robotF1,robotF2:florero
+  robotP1,robotP2:papelero
+  robotF:fiscal
+comenzar
+  AsignarArea(robotF1,AreaF11)
+  AsignarArea(robotF1,AreaF12)
+  AsignarArea(robotF2,AreaF21)
+  AsignarArea(robotF2,AreaF22)
+  AsignarArea(robotP1,AreaP11)
+  AsignarArea(robotP1,AreaP12)
+  AsignarArea(robotP2,AreaP21)
+  AsignarArea(robotP2,AreaP22)
+  AsignarArea(robotF,AreaF)
+  Iniciar(robotF1,3,3)
+  Iniciar(robotF2,16,3)
+  Iniciar(robotP1,13,13)
+  Iniciar(robotP2,26,13)
+  Iniciar(robotF,14,6)
+fin
+      
+ 
+        

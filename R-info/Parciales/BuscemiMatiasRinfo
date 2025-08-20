@@ -1,0 +1,134 @@
+programa Buscemi_Matias
+procesos 
+  proceso primerRobot(ES Flor:numero)
+  comenzar 
+    repetir 2
+      repetir 10
+        mientras(HayFlorEnLaEsquina)
+          tomarFlor 
+          Flor:=Flor+1         
+        mover
+      derecha
+  fin
+  proceso segundoRobot(ES Flor:numero)
+  comenzar
+    repetir 2
+      derecha
+    repetir 2
+      repetir 9
+        mientras(HayFlorEnLaEsquina)
+          tomarFlor  
+          Flor:=Flor+1        
+        mover
+      derecha
+  fin
+  proceso depositarDeAUna(E f:numero)
+  variables
+    av,ca:numero
+  comenzar
+    av:=PosAv
+    ca:=PosCa
+    repetir f
+      BloquearEsquina(20,20)
+      Pos(20,20)
+      si(HayFlorEnLaBolsa)
+        depositarFlor
+      Pos(av,ca)
+      LiberarEsquina(20,20)
+  fin
+areas
+  esquina: AreaPC(20,20,20,20)
+  
+  AreaA11: AreaP(1,1,1,11)
+  AreaA12:AreaP(2,11,11,11)
+  
+  AreaA21:AreaP(11,1,11,10)
+  AreaA22:AreaP(2,1,10,1)
+  
+  AreaB11:AreaP(20,1,20,11)
+  AreaB12:AreaP(21,11,30,11)
+  
+  AreaB21:AreaP(30,1,30,10)
+  AreaB22:AreaP(21,1,29,1)
+  
+  AreaF:AreaP(50,50,50,50)
+robots
+  robot primero
+  variables
+    flores:numero
+    ok:boolean
+  comenzar
+    RecibirMensaje(ok,robotF)
+    primerRobot(flores)
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:=flores+1
+    si(ok)
+      EnviarMensaje(V,robotA2)
+    sino
+      EnviarMensaje(V,robotB2)
+    depositarDeAUna(flores)
+    EnviarMensaje(flores,robotF)
+  fin 
+  robot segundo
+  variables
+    flores:numero
+    ok:boolean
+  comenzar
+    RecibirMensaje(ok,*)
+    segundoRobot(flores)
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:=flores+1
+    depositarDeAUna(flores)
+    EnviarMensaje(flores,robotF)
+  fin
+  robot fiscal
+  variables
+    flores,floresA,floresB:numero
+  comenzar
+    EnviarMensaje(V,robotA1)
+    EnviarMensaje(F,robotB1)
+    floresA:=0
+    floresB:=0
+    RecibirMensaje(flores,robotA1)
+    floresA:=floresA+flores
+    RecibirMensaje(flores,robotB1)
+    floresB:=floresB+flores
+    RecibirMensaje(flores,robotA2)
+    floresA:=floresA+flores
+    RecibirMensaje(flores,robotB2)
+    floresB:=floresB+flores   
+    si(floresA>floresB)
+      Informar(1)
+    sino
+      Informar(2)
+  fin
+variables  
+  robotA1,robotB1:primero
+  robotA2,robotB2:segundo
+  robotF:fiscal
+comenzar
+  AsignarArea(robotA1,esquina)
+  AsignarArea(robotA2,esquina)    
+  AsignarArea(robotB1,esquina)    
+  AsignarArea(robotB2,esquina)    
+  AsignarArea(robotF,AreaF)    
+  AsignarArea(robotA1,AreaA11)    
+  AsignarArea(robotA1,AreaA12)    
+  AsignarArea(robotA2,AreaA21)    
+  AsignarArea(robotA2,AreaA22)    
+  AsignarArea(robotB1,AreaB11)    
+  AsignarArea(robotB1,AreaB12)    
+  AsignarArea(robotB2,AreaB21)    
+  AsignarArea(robotB2,AreaB22)
+  Iniciar(robotA1,1,1)
+  Iniciar(robotA2,11,10)
+  Iniciar(robotB2 ,30,10)
+  Iniciar(robotB1,20,1)
+  Iniciar(robotF,50,50)
+fin       
+
+   
+      
+      

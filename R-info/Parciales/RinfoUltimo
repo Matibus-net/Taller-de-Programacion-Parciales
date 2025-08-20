@@ -1,0 +1,157 @@
+programa matiBuscemi
+procesos 
+  proceso juntar(E id:numero)
+  comenzar
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      EnviarMensaje(id,robotJ)
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      EnviarMensaje(id,robotJ)
+  fin
+areas
+  AreaT:AreaPC(45,48,62,69)
+  ini1:AreaP(10,10,10,10)
+  ini2:AreaP(11,10,11,10)
+  ini3:AreaP(12,10,12,10)
+  ini4:AreaP(13,10,13,10)
+  ini5:AreaP(1,1,1,1)
+robots 
+  robot recolector
+  variables
+    id:numero
+    avI,caI,av,ca:numero
+    ok:boolean
+  comenzar
+    avI:=PosAv
+    caI:=PosCa
+    RecibirMensaje(id,robotJ)
+    Random(av,45,62)
+    Random(ca,48,69)
+    BloquearEsquina(av,ca)
+    Pos(av,ca)
+    juntar(id)
+    Pos(avI,caI)
+    LiberarEsquina(av,ca)
+    EnviarMensaje(0,robotJ)
+    RecibirMensaje(ok,robotJ)
+    si(ok)
+      mientras(HayPapelEnLaBolsa)
+        depositarPapel
+      mientras(HayFlorEnLaBolsa)
+        depositarFlor
+  fin
+  robot jefe
+  variables
+    ok:boolean
+    i1,i2,i3,i4,i,num:numero
+  comenzar
+    num:=0
+    ok:=V
+    i1:=0
+    i2:=0
+    i3:=0
+    i4:=0
+    EnviarMensaje(1,robot1)
+    EnviarMensaje(2,robot2)
+    EnviarMensaje(3,robot3)
+    EnviarMensaje(4,robot4)
+    mientras(ok)
+      RecibirMensaje(i,*)
+      si(i=1)
+        i1:=i1+1
+      sino
+        si(i=2)
+          i2:=i2+1
+        sino
+          si(i=3)
+            i3:=i3+1
+          sino
+            si(i=4)
+              i4:=i4+1
+            sino
+              num:=num+1
+      si(num=4)
+        ok:=F
+    si(i1>i2)
+      si(i1>i3)
+        si(i1>i4)
+          EnviarMensaje(V,robot1)
+          EnviarMensaje(F,robot2)
+          EnviarMensaje(F,robot3)
+          EnviarMensaje(F,robot4)    
+        sino
+          EnviarMensaje(F,robot1)
+          EnviarMensaje(F,robot2)
+          EnviarMensaje(F,robot3)
+          EnviarMensaje(V,robot4) 
+      sino
+        si(i3>i4)
+          EnviarMensaje(F,robot1)
+          EnviarMensaje(F,robot2)
+          EnviarMensaje(V,robot3)
+          EnviarMensaje(F,robot4)
+        sino
+          EnviarMensaje(F,robot1)
+          EnviarMensaje(F,robot2)
+          EnviarMensaje(F,robot3)
+          EnviarMensaje(V,robot4)
+    sino
+      si(i2>i3)
+        si(i2>i4)
+          EnviarMensaje(F,robot1)
+          EnviarMensaje(V,robot2)
+          EnviarMensaje(F,robot3)
+          EnviarMensaje(F,robot4)
+        sino
+          EnviarMensaje(F,robot1)
+          EnviarMensaje(F,robot2)
+          EnviarMensaje(F,robot3)
+          EnviarMensaje(V,robot4)
+      sino
+        si(i3>i4)
+          EnviarMensaje(F,robot1)
+          EnviarMensaje(F,robot2)
+          EnviarMensaje(V,robot3)
+          EnviarMensaje(F,robot4)
+        sino
+          EnviarMensaje(F,robot1)
+          EnviarMensaje(F,robot2)
+          EnviarMensaje(F,robot3)
+          EnviarMensaje(V,robot4)
+  fin
+variables
+  robot1,robot2,robot3,robot4:recolector
+  robotJ:jefe
+comenzar
+  AsignarArea(robot1,ini1)
+  AsignarArea(robot2,ini2)
+  AsignarArea(robot3,ini3)
+  AsignarArea(robot4,ini4)
+  AsignarArea(robotJ,ini5)
+  AsignarArea(robot1,AreaT)
+  AsignarArea(robot2,AreaT)
+  AsignarArea(robot3,AreaT)
+  AsignarArea(robot4,AreaT)
+  Iniciar(robot1,10,10)
+  Iniciar(robot2,11,10)
+  Iniciar(robot3,12,10)
+  Iniciar(robot4,13,10)
+  Iniciar(robotJ,1,1)
+fin
+          
+
+          
+
+
+          
+
+
+         
+
+
+
+
+ 
+
+          
