@@ -15,7 +15,6 @@ public class Empresa {
     private Director DirectorEjecutivo;
     private Encargado[] Encargados;
     private int dimf;
-    private int diml=0;
 
     public Empresa(String nombre, String direccion, Director DirectorEjecutivo, int dimf) {
         this.nombre = nombre;
@@ -41,7 +40,6 @@ public class Empresa {
             System.out.println("ESA SUCURSAL YA TIENE ENCARGADO");
         }else {
             Encargados[x-1]=E;
-            diml++;
         }
     }
     @Override
@@ -49,12 +47,13 @@ public class Empresa {
         String st="Nombre de l empresa: "+this.getNombre()+" Direccion: "+this.getDireccion()+"\n";
         st+="Director: "+this.DirectorEjecutivo.toString()+"\n";
         st+="------------------------------"+"\n";
-        for(int i = 0 ; i<diml;i++){
-           st+="Sucursal: "+(i+1)+" Encargado: "+Encargados[i].toString()+"\n";
-           st+="---------------------------"+"\n";
+        for(int i=0; i< dimf; i++ ){
+            st+="Sucursal: "+(i+1)+" ";
+            if(Encargados[i]==null){
+                st+="sin encargado";
+            }else st+=Encargados[i].toString();
+            st+="\n";
         }
-        if(dimf-diml!=0)
-            st+="\n Hay "+(dimf-diml)+" Sucursales sin encargado";
         return st;
     }
 }
