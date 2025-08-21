@@ -1,0 +1,94 @@
+programa matias
+procesos
+  proceso juntarUnPapel(ES papeles:numero; ES ok :boolean)
+  variables
+    av,ca:numero
+  comenzar 
+    av:=PosAv 
+    ca:=PosCa 
+    BloquearEsquina(50,50)
+    Pos(50,50)
+    si(HayPapelEnLaEsquina)
+      tomarPapel 
+      papeles:=papeles+1 
+    sino
+      ok:=F 
+    Pos(av,ca) 
+    LiberarEsquina(50,50) 
+  fin 
+  proceso juntarUnaFlor(ES flores:numero; ES ok: boolean)
+  variables
+    av,ca:numero
+  comenzar
+    av:=PosAv
+    ca:=PosCa
+    BloquearEsquina(50,50)
+    Pos(50,50)
+    si(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:=flores+1
+    sino
+      ok:=F
+    Pos(av,ca)
+    LiberarEsquina(50,50)
+  fin 
+  proceso recorrerCalle5(E obj:numero)
+  comenzar
+    Pos(1,5)
+    derecha
+    mientras(obj>0)&(PosAv<100)
+      mover
+      obj:=obj+-1
+  fin
+areas
+  esquina:AreaC(50,50,50,50)
+  calle5:AreaC(1,5,100,5)
+  iniP:AreaP(2,2,2,2)
+  iniF:AreaP(3,3,3,3)
+robots
+  robot papelero
+  variables
+    flores,papeles:numero
+    ok:boolean
+  comenzar
+    papeles:=0
+    ok:=V
+    mientras(ok)
+      juntarUnPapel(papeles,ok)
+    EnviarMensaje(papeles,robotF)
+    RecibirMensaje(flores,robotF)
+    si(papeles>flores)
+      recorrerCalle5(papeles)
+      Informar('Papeles',papeles)
+    sino
+      si(papeles=flores)
+        Informar('Empate',papeles)
+  fin
+  robot florero
+  variables
+    flores,papeles:numero
+    ok:boolean
+  comenzar
+    flores:=0
+    ok:=V
+    mientras(ok)
+      juntarUnaFlor(flores,ok)
+    RecibirMensaje(papeles,robotP)
+    EnviarMensaje(flores,robotP)
+    si(flores>papeles)
+      recorrerCalle5(flores)
+      Informar('Flores',flores)
+  fin
+variables
+  robotF:florero
+  robotP:papelero
+comenzar
+  AsignarArea(robotF,iniF)
+  AsignarArea(robotF,calle5)
+  AsignarArea(robotF,esquina)
+  AsignarArea(robotP,esquina)
+  AsignarArea(robotP,calle5)
+  AsignarArea(robotP,iniP)
+  Iniciar(robotP,2,2)
+  Iniciar(robotF,3,3)
+fin
