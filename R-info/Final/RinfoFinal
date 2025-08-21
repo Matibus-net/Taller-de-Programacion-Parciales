@@ -1,0 +1,202 @@
+programa BuscemiMatias
+procesos 
+  proceso esconderFlores
+  variables
+    av,ca,avi,cai:numero
+  comenzar
+    avi:=PosAv
+    cai:=PosCa
+    repetir 2 
+      Random(av,1,5)
+      Random(ca,1,5)
+      BloquearEsquina(av,ca)
+      Pos(av,ca)
+      depositarFlor
+      Pos(avi,cai)
+      LiberarEsquina(av,ca)
+  fin
+  proceso esconderPapeles
+  variables
+    av,ca,avi,cai:numero
+  comenzar
+    avi:=PosAv
+    cai:=PosCa
+    repetir 2 
+      Random(av,1,5)
+      Random(ca,1,5)
+      BloquearEsquina(av,ca)
+      Pos(av,ca)
+      depositarPapel
+      Pos(avi,cai)
+      LiberarEsquina(av,ca)
+  fin
+  proceso buscarFlores(E av:numero ;E ca:numero;  ES flores:numero)
+  variables
+    avi,cai,flor:numero
+  comenzar
+    cai:=PosCa
+    avi:=PosAv
+    BloquearEsquina(av,ca)
+    Pos(av,ca)
+    mientras(HayFlorEnLaEsquina)
+      tomarFlor
+      flores:=flores+1
+    Pos(avi,cai)
+    LiberarEsquina(av,ca)
+  fin
+  proceso buscarPapeles(E av:numero ;E ca:numero;  ES Papeles:numero)
+  variables
+    avi,cai:numero
+  comenzar
+    cai:=PosCa
+    avi:=PosAv
+    BloquearEsquina(av,ca)
+    Pos(av,ca)
+    mientras(HayPapelEnLaEsquina)
+      tomarPapel
+      Papeles:=Papeles+1
+    Pos(avi,cai)
+    LiberarEsquina(av,ca)
+  fin
+  
+  proceso esquinasDiferentes(ES avP:numero; ES avF:numero ; ES caP:numero;ES caF:numero)
+  variables
+    av1,av2,ca1,ca2:numero
+  comenzar
+    Random(av1,1,5)
+    Random(av2,1,5)
+    Random(ca1,1,5)
+    Random(ca2,1,5)
+    mientras(ca1 = ca2)&(av1=av2)
+      Random(av1,1,5) 
+      Random(av2,1,5) 
+      Random(ca1,1,5) 
+      Random(ca2,1,5) 
+    avP:=av2
+    avF:=av1
+    caP:=ca2
+    caF:=ca1
+  fin
+      
+areas
+  iniF1: AreaP(6,1,6,1)
+  iniF2: AreaP(6,2,6,2)
+  iniP1: AreaP (6,3,6,3)
+  iniP2: AreaP (6,4,6,4)
+  iniFis: AreaP (6,5,6,5)
+  areaJuego: AreaPC (1,1,5,5)
+robots 
+  robot flor
+  variables
+    av,ca,flores,id:numero
+    ok:boolean
+  comenzar
+    RecibirMensaje(id,fiscal) 
+    si(id=3) 
+      esconderFlores 
+      EnviarMensaje(V,fiscal) 
+    sino
+      RecibirMensaje(ok,fiscal)
+      flores:=0
+      mientras(ok) 
+        RecibirMensaje(av,fiscal) 
+        RecibirMensaje(ca,fiscal) 
+        buscarFlores(av,ca,flores) 
+        EnviarMensaje(id,fiscal) 
+        EnviarMensaje(flores,fiscal) 
+        RecibirMensaje(ok,fiscal) 
+  fin
+  robot papel
+  variables
+    av,ca,papeles,id:numero
+    ok:boolean
+  comenzar
+    RecibirMensaje(id,fiscal)
+    si(id=4)
+      esconderPapeles
+      EnviarMensaje(V,fiscal)
+    sino
+      RecibirMensaje(ok,fiscal)
+      papeles:=0
+      mientras(ok)
+        RecibirMensaje(av,fiscal)
+        RecibirMensaje(ca,fiscal)
+        buscarPapeles(av,ca,papeles)
+        EnviarMensaje(id,fiscal)
+        EnviarMensaje(papeles,fiscal)
+        RecibirMensaje(ok,fiscal)
+  fin 
+  robot fisco
+  variables
+    id,obj,gano:numero
+    ok:boolean
+    avF,avP,caF,caP:numero
+  comenzar
+    EnviarMensaje(1,robotF1) 
+    EnviarMensaje(2,robotP1) 
+    EnviarMensaje(3,robotF2) 
+    EnviarMensaje(4,robotP2) 
+    
+    repetir 2
+      RecibirMensaje(ok,*) 
+      
+    EnviarMensaje(V,robotF1) 
+    EnviarMensaje(V,robotP1) 
+    obj:= 0 
+    gano:=0  
+    mientras (obj<>2) 
+      esquinasDiferentes(avP,avF,caP,caF) 
+      EnviarMensaje(avF,robotF1) 
+      EnviarMensaje(caF,robotF1) 
+      EnviarMensaje(avP,robotP1) 
+      EnviarMensaje(caP,robotP1) 
+      repetir 2 
+        RecibirMensaje(id,*) 
+        si(id=1) 
+          RecibirMensaje(obj,robotF1) 
+          si(obj=2)&(gano=0) 
+            gano:=id 
+        sino 
+          RecibirMensaje(obj,robotP1) 
+          si(obj=2)&(gano=0)
+            gano:=id 
+      si(gano<>0) 
+        EnviarMensaje(F,robotF1) 
+        EnviarMensaje(F,robotP1) 
+        ok:=F
+      sino
+        EnviarMensaje(V,robotF1)
+        EnviarMensaje(V,robotP1)
+    si(gano=1)
+      Informar('gano_equipo_flores',V)
+    sino
+      Informar('gano_equipo_papeles',V)
+  fin
+variables
+  robotF1,robotF2:flor
+  robotP1,robotP2:papel
+  fiscal:fisco
+comenzar
+  AsignarArea(robotF1,iniF1)
+  AsignarArea(robotF2,iniF2)
+  
+  AsignarArea(robotP1,iniP1)
+  AsignarArea(robotP2,iniP2)
+  
+  AsignarArea(fiscal,iniFis)
+  
+  AsignarArea(robotF1,areaJuego)
+  AsignarArea(robotF2,areaJuego)
+  
+  AsignarArea(robotP1,areaJuego)
+  AsignarArea(robotP2,areaJuego)
+  
+  Iniciar(robotF1,6,1)
+  Iniciar(robotF2,6,2)
+  Iniciar(robotP1,6,3)
+  Iniciar(robotP2,6,4)
+  Iniciar(fiscal,6,5)
+
+fin
+   
+
