@@ -1,0 +1,88 @@
+programa matiasBuscemi
+procesos
+  proceso juntarFlor
+  variables
+    av:numero
+    ca:numero
+  comenzar
+    av:=PosAv
+    ca:=PosCa
+    BloquearEsquina(50,50)
+    Pos(50,50)
+    si(HayFlorEnLaEsquina)
+      tomarFlor
+    Pos(av,ca)
+    LiberarEsquina(50,50)
+  fin
+areas
+  esquina:AreaPC(50,50,50,50)
+  ini1:AreaP(2,2,2,2)
+  ini2:AreaP(3,3,3,3)   
+  ini3:AreaP(4,4,4,4)
+  ini4:AreaP(5,5,5,5)
+  ini5:AreaP(1,1,1,1)
+robots
+  robot flor
+  variables
+    id:numero
+    ok:boolean
+  comenzar
+    RecibirMensaje(id,jefe)
+    repetir 5
+      RecibirMensaje(ok,jefe)
+      si(ok)
+        juntarFlor
+  fin
+  robot lider
+  variables
+    num:numero
+  comenzar
+    EnviarMensaje(1,robot1)
+    EnviarMensaje(2,robot2)
+    EnviarMensaje(3,robot3)
+    EnviarMensaje(4,robot4)
+    repetir 5
+      Random(num,1,4)
+      si(num=1)
+        EnviarMensaje(V,robot1)
+        EnviarMensaje(F,robot2)
+        EnviarMensaje(F,robot3)
+        EnviarMensaje(F,robot4)
+      sino
+        si(num=2)
+          EnviarMensaje(F,robot1)
+          EnviarMensaje(V,robot2)
+          EnviarMensaje(F,robot3)
+          EnviarMensaje(F,robot4)
+        sino
+          si(num=3)
+            EnviarMensaje(F,robot1)
+            EnviarMensaje(F,robot2)
+            EnviarMensaje(V,robot3)
+            EnviarMensaje(F,robot4)
+          sino
+            EnviarMensaje(F,robot1)
+            EnviarMensaje(F,robot2)
+            EnviarMensaje(F,robot3)
+            EnviarMensaje(V,robot4)
+  fin
+variables
+  robot1,robot2,robot3,robot4:flor
+  jefe:lider
+comenzar
+  AsignarArea(robot1,ini1)
+  AsignarArea(robot2,ini2)
+  AsignarArea(robot3,ini3)
+  AsignarArea(robot4,ini4)
+  AsignarArea(jefe,ini5)
+  AsignarArea(robot1,esquina)
+  AsignarArea(robot2,esquina)
+  AsignarArea(robot3,esquina)
+  AsignarArea(robot4,esquina)
+  Iniciar(robot1,2,2)
+  Iniciar(robot2,3,3)
+  Iniciar(robot3,4,4)
+  Iniciar(robot4,5,5)
+  Iniciar(jefe,1,1)
+  
+fin
